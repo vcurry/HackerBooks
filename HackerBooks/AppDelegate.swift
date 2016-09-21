@@ -7,15 +7,65 @@
 //
 
 import UIKit
+import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var model = CoreDataStack(modelName: "Model")!
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+    
+        AsyncData.removeAllLocalFiles()
+        do{
+            try model.dropAllData()
+        }catch{
+            print("La cagamos al intentar borrar")
+        }
+        
+        
+        window = UIWindow.init(frame: UIScreen.main.bounds)
+        
+        do{
+            guard let url = Bundle.main.url(forResource: "books_readable", withExtension: "json") else{
+                fatalError("Unable to read json file!")
+            }
+            let data = try Data(contentsOf: url)
+            let jsonDicts = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? JSONArray
+            for dict in jsonDicts!{
+                let _ = try decode(book: dict, context: model.context)
+                model.save()
+                
+            }
+            
+        }catch{
+            fatalError("Error while loading model")
+        }
+        
+
+        
+        let fr = NSFetchRequest<Book>(entityName: Book.entityName)
+        fr.fetchBatchSize = 50
+        
+        fr.sortDescriptors = [NSSortDescriptor(key: "name",
+                                               ascending: false),
+                              NSSortDescriptor(key: "modificationDate",
+                                               ascending: true) ]
+        
+        
+
+        let fc = NSFetchedResultsController(fetchRequest: fr, managedObjectContext: model.context, sectionNameKeyPath: nil, cacheName: nil)
+
+        let bVC = BooksViewController(fetchedResultsController: fc as! NSFetchedResultsController<NSFetchRequestResult>, style: .plain)
+        let navVC = UINavigationController(rootViewController: bVC)
+        
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = navVC
+        window?.makeKeyAndVisible()
+
         return true
     }
 
