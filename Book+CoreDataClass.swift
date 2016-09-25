@@ -32,31 +32,35 @@ public class Book: NSManagedObject {
         self.title = title
 
         let authorsCD = authors
+        let tagsCD = tags
     //   let tagsCD = tags.map{Tag(name: $0, inContext: context)}
         let _image = coverImage
         let _pdf = pdf
         _image.delegate = self
         _pdf.delegate = self
         
-     //   let coverImage = Image(book: self, image: coverImage, inContext: context)
-     //   let pdf = Pdf(book: self, pdf: pdf, inContext: context)
+//        let coverImage = Image(book: self, image: coverImage, inContext: context)
+  //      let pdf = Pdf(book: self, pdf: pdf, inContext: context)
         
         for author in authorsCD{
+            
             let req = NSFetchRequest<Author>(entityName: Author.entityName)
-
+            
             req.predicate  = NSPredicate(format: "name == %@", author)
             req.fetchLimit = 1
             req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: false)]
-            let fc = NSFetchedResultsController(fetchRequest: req, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-
-            if(fc.fetchedObjects == nil){
+            let existingAuthors = try! context.fetch(req)
+            if(existingAuthors == []){
                 let a = Author(name: author, inContext: context)
                 self.addToAuthors(a)
-
             } else{
-                print("Duplicado")
+                self.addToAuthors(existingAuthors[0])
             }
-            
+        }
+        
+        for tag in tagsCD{
+            let bookTag = BookTag(book: self, tagName: tag, inContext: context)
+            self.addToBookTags(bookTag)
         }
     }
 }

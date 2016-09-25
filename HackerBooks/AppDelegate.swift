@@ -49,14 +49,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let fr = NSFetchRequest<Book>(entityName: Book.entityName)
         fr.fetchBatchSize = 50
         
-        fr.sortDescriptors = [NSSortDescriptor(key: "name",
-                                               ascending: false),
-                              NSSortDescriptor(key: "modificationDate",
-                                               ascending: true) ]
+        fr.sortDescriptors = [NSSortDescriptor(key: "title",
+                                               ascending: false)]
         
         
 
         let fc = NSFetchedResultsController(fetchRequest: fr, managedObjectContext: model.context, sectionNameKeyPath: nil, cacheName: nil)
+        print(fc.fetchedObjects?.count)
 
         let bVC = BooksViewController(fetchedResultsController: fc as! NSFetchedResultsController<NSFetchRequestResult>, style: .plain)
         let navVC = UINavigationController(rootViewController: bVC)
