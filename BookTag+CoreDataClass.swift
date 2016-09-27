@@ -11,7 +11,7 @@ import CoreData
 
 @objc(BookTag)
 public class BookTag: NSManagedObject {
-
+    
     static let entityName = "BookTag"
     
     convenience init(book: Book, tagName: String, inContext context: NSManagedObjectContext){
@@ -34,6 +34,33 @@ public class BookTag: NSManagedObject {
             self.tag = existingTags[0]
         }
         
+        
+        
     }
+    
+//    convenience init(favoriteBook: Book, inContext context: NSManagedObjectContext){
+//        let ent = NSEntityDescription.entity(forEntityName: BookTag.entityName, in: context)!
+//        
+//        self.init(entity: ent, insertInto: context)
+//        
+//        self.book = favoriteBook
+//        
+//        let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
+//        
+//        req.predicate  = NSPredicate(format: "name == %@", "favorite")
+//        req.fetchLimit = 1
+//        req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: false)]
+//        let existingTags = try! context.fetch(req)
+//
+//        if (existingTags.count == 0){
+//            print("creamos tag favorito")
+//            let t = Tag(name: "favorite", inContext: context)
+//            self.tag = t
+//        }else{
+//            self.tag = existingTags[0]
+//        }
+//
+//    }
+    
 }
 

@@ -20,9 +20,11 @@ public class Book: NSManagedObject {
     
     var _image : IMAGE? = nil
     var _pdf : PDF? = nil
+    
+    var isfavorite : Bool = false
+
     weak var delegate : BookDelegate?
-
-
+    
     
     convenience init(title: String, authors: [String], tags: [String], coverImage: AsyncData, pdf: AsyncData, inContext context: NSManagedObjectContext) {
         let ent = NSEntityDescription.entity(forEntityName: Book.entityName, in: context)!
@@ -33,19 +35,19 @@ public class Book: NSManagedObject {
 
         let authorsCD = authors
         let tagsCD = tags
-    //   let tagsCD = tags.map{Tag(name: $0, inContext: context)}
-        let _image = coverImage
-        let _pdf = pdf
-        _image.delegate = self
-        _pdf.delegate = self
+        _image = coverImage
+        _pdf = pdf
+        _image?.delegate = self
+        _pdf?.delegate = self
         
-//        let coverImage = Image(book: self, image: coverImage, inContext: context)
-  //      let pdf = Pdf(book: self, pdf: pdf, inContext: context)
+        
+   //     let cover = Image(book: self, image: UIImage(data: (self._image!.data))!, inContext: context)
+     //   self.image = cover
+       // _ = Pdf(book: self, pdf: (_pdf?.data)!, inContext: context)
         
         for author in authorsCD{
             
             let req = NSFetchRequest<Author>(entityName: Author.entityName)
-            
             req.predicate  = NSPredicate(format: "name == %@", author)
             req.fetchLimit = 1
             req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: false)]
@@ -62,7 +64,43 @@ public class Book: NSManagedObject {
             let bookTag = BookTag(book: self, tagName: tag, inContext: context)
             self.addToBookTags(bookTag)
         }
+
     }
+    
+    func isFavoriteBook(){
+        self.isfavorite = !self.isfavorite
+        sendNotification(name: BookDidChange)
+        
+        let context = self.managedObjectContext
+        
+
+        if (self.isfavorite){
+            let bookTag = BookTag(book: self, tagName: "favorite", inContext: context!)
+            self.addToBookTags(bookTag)
+        }else{
+            let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
+            req.predicate  = NSPredicate(format: "tag.name == %@", "favorite")
+            req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
+            let existingFavoriteBookTags = try! context?.fetch(req)
+            if(existingFavoriteBookTags?.count == 1){
+                let bt = existingFavoriteBookTags?[0]
+                context?.delete((bt?.tag!)!)
+                context?.delete(bt!)
+            } else{
+                for bt in existingFavoriteBookTags!{
+                    if bt.book == self {
+                        context?.delete(bt)
+                    }
+                }
+            }
+        }
+        
+        do {
+            try context?.save()
+        } catch {
+            print("No se pudo guardar el favorito")
+        }
+     }
 }
 
 
@@ -90,7 +128,6 @@ let BookPDFDidDownload = Notification.Name(rawValue: "io.keepCoding.BookPDFDidDo
 extension Book{
     
     func sendNotification(name: Notification.Name){
-        
         let n = Notification(name: name, object: self, userInfo: [BookKey:self])
         let nc = NotificationCenter.default
         nc.post(n)

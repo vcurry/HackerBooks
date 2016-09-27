@@ -149,13 +149,8 @@ extension CoreDataStack {
                         fatalError("Error while saving persisting context: \(error)")
                     }
                 }
-                
-                
             }
         }
-        
-        
-        
     }
     
     

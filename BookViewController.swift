@@ -27,8 +27,57 @@ class BookViewController: UIViewController {
     @IBOutlet weak var coverImage: UIImageView!
     @IBOutlet weak var favoriteItem: UIBarButtonItem!
     @IBAction func readBook(_ sender: AnyObject) {
-        print("leer")
+        let pVC = PDFViewController(model: _model)
+        navigationController?.pushViewController(pVC, animated: true)
     }
 
 
+    @IBAction func switchFavorite(_ sender: AnyObject) {
+        _model.isFavoriteBook()
+        print(_model.isfavorite)
+        
+    }
+    //MARK: - Syncing
+    func syncViewWithModel(book: Book){
+        
+    //    coverImage.image = UIImage(data: (_model._image?.data)!)
+        title = _model.title
+        if _model.isfavorite{
+            favoriteItem.title = "★"
+        }else{
+            favoriteItem.title = "☆"
+        }
+        title = _model.title
+        
+    }
+    
+    //MARK: - LifeCycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        startObserving(book: _model)
+        syncViewWithModel(book: _model)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopObserving(book: _model)
+    }
+    
+    
+    //MARK: - Notifications
+    let _nc = NotificationCenter.default
+    var bookObserver : NSObjectProtocol?
+    
+    func startObserving(book: Book){
+        bookObserver = _nc.addObserver(forName: BookDidChange, object: book, queue: nil){ (n: Notification) in
+            self.syncViewWithModel(book: book)
+        }
+    }
+    
+    func stopObserving(book:Book){
+        _nc.removeObserver(bookObserver)
+    }
+    
 }
+
+

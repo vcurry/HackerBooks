@@ -28,6 +28,15 @@ class BooksViewController: CoreDataTableViewController {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNotifications()
+    }
+    
+    deinit {
+        tearDownNotifications()
+    }
+    
     //MARK: - Cell registration
     private func registerNib(){
         
@@ -39,6 +48,7 @@ class BooksViewController: CoreDataTableViewController {
     //MARK: - Data Source
     override
     func numberOfSections(in tableView: UITableView) -> Int {
+        print("tags: \(existingTags.count)")
         return (existingTags.count)
     }
     
@@ -50,12 +60,10 @@ class BooksViewController: CoreDataTableViewController {
     override
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
-        print(existingTags[section].name)
         req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[section].name!)
 
         req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
         let existingBookTags = try! model.context.fetch(req)
-        print(existingBookTags.count)
         return (existingBookTags.count)
     }
 
@@ -74,9 +82,6 @@ class BooksViewController: CoreDataTableViewController {
 
         cell.titleView.text = bk?.title
         let aut : [Author] = bk!.authors?.allObjects as! [Author]
-//        aut.map{
-//            $0.name
-//        }
 
         var autText : [String] = []
         for a in aut{
@@ -117,4 +122,38 @@ class BooksViewController: CoreDataTableViewController {
         
     }
     
+    override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // The cell was just hidden: stop observing
+        let cell = tableView.cellForRow(at: indexPath) as! BookTableViewCell
+        cell.stopObserving()
+    }
+    
+    //MARK: - Notifications
+    // Observes the notifications that come from Book,
+    // and reloads the table
+    var bookObserver : NSObjectProtocol?
+    
+    func setupNotifications() {
+        
+        let nc = NotificationCenter.default
+        bookObserver = nc.addObserver(forName: BookDidChange, object: nil, queue: nil)
+        { (n: Notification) in
+            self.tableView.reloadData()
+        }
+    }
+    
+    func tearDownNotifications(){
+        
+        let nc = NotificationCenter.default
+        nc.removeObserver(self.bookObserver)
+    }
+    
 }
+
+
+
+//MARK: - Delegate protocol
+protocol LibraryViewControllerDelegate {
+    func libraryViewController(_ sender: BooksViewController, didSelect selectedBook:Book)
+}
+

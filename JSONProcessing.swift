@@ -62,17 +62,9 @@ func decode(book dict: JSONDictionary, context: NSManagedObjectContext) throws -
     
     
     return Book(title: title, authors: authors, tags: tags, coverImage: image, pdf: pdf, inContext: context)
-  //  return Book(title: title, authors: authors, tags: tags, pdf: pdf, image: image)
     
 }
 
-//func uniqueObject(value v: Any, key: String, entity: AnyObject, context: NSManagedObjectContext){
-//    let req = NSFetchRequest<entity.dynamicType>(entityName: entity.entityName)
-//    
-//    
-//    
-//    
-//}
 
 func decode(book dict: JSONDictionary?) throws -> Book{
     
