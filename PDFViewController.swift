@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class PDFViewController: UIViewController {
 
@@ -26,14 +27,30 @@ class PDFViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    @IBAction func showAnnotations(_ sender: AnyObject) {
+        let req = NSFetchRequest<Annotation>(entityName: Annotation.entityName)
+        req.fetchBatchSize = 50
+        req.predicate = NSPredicate(format: "book == %@", _model!)
+        req.sortDescriptors = [NSSortDescriptor(key:"modificationDate", ascending: false)]
+        
+        let fc = NSFetchedResultsController(fetchRequest: req, managedObjectContext: (_model?.managedObjectContext!)!, sectionNameKeyPath: nil, cacheName: nil)
+        
+        let annotationsVC = AnnotationsViewController(fc: fc as! NSFetchedResultsController<NSFetchRequestResult>, model: _model!)
+
+        navigationController?.pushViewController(annotationsVC, animated: true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupNotifications()
         
-        browserView.load((_model?._pdf?.data)!, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"http://www.google.com")!)
-        
+        let nc = NotificationCenter.default
+        _bookObserver = nc.addObserver(forName: BookPDFDidDownload, object: _model, queue: nil){ (n: Notification) in
+            let pdf = Pdf(book: self._model!, pdf: (self._model?.pdf!.pdfData)! as Data, inContext: (self._model?.managedObjectContext!)!)
+            self._model?.pdf = pdf
+            self.browserView.load((self._model?.pdf?.pdfData)! as Data, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"http://www.google.com")!)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {

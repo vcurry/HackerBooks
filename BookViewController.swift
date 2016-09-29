@@ -26,6 +26,7 @@ class BookViewController: UIViewController {
     
     @IBOutlet weak var coverImage: UIImageView!
     @IBOutlet weak var favoriteItem: UIBarButtonItem!
+    
     @IBAction func readBook(_ sender: AnyObject) {
         let pVC = PDFViewController(model: _model)
         navigationController?.pushViewController(pVC, animated: true)
@@ -40,7 +41,7 @@ class BookViewController: UIViewController {
     //MARK: - Syncing
     func syncViewWithModel(book: Book){
         
-    //    coverImage.image = UIImage(data: (_model._image?.data)!)
+        coverImage.image = UIImage(data: (_model.image?.imageData)! as Data)
         title = _model.title
         if _model.isfavorite{
             favoriteItem.title = "★"
@@ -79,5 +80,17 @@ class BookViewController: UIViewController {
     }
     
 }
+
+extension BookViewController: BooksViewControllerDelegate{
+    
+    func booksViewController(_ sender: BooksViewController,
+                               didSelect selectedBook:Book){
+        stopObserving(book: _model)
+        _model = selectedBook
+        startObserving(book: selectedBook)
+        
+    }
+}
+
 
 

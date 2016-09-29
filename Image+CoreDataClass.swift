@@ -2,7 +2,7 @@
 //  Image+CoreDataClass.swift
 //  HackerBooks
 //
-//  Created by Verónica Cordobés on 19/9/16.
+//  Created by Verónica Cordobés on 28/9/16.
 //  Copyright © 2016 Verónica Cordobés. All rights reserved.
 //
 
@@ -45,9 +45,17 @@ public class Image: NSManagedObject {
         
         self.init(entity: ent, insertInto: context)
         
-        self.annotation = annotation
+        addToAnnotation(annotation)
         self.image = image
     }
     
-
+    convenience init(annotation: Annotation, inContext context: NSManagedObjectContext){
+        let ent = NSEntityDescription.entity(forEntityName: Image.entityName, in: context)!
+        
+        self.init(entity: ent, insertInto: context)
+        addToAnnotation(annotation)
+    }
+    
+    
 }
+

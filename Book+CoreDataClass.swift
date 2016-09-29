@@ -41,9 +41,10 @@ public class Book: NSManagedObject {
         _pdf?.delegate = self
         
         
-   //     let cover = Image(book: self, image: UIImage(data: (self._image!.data))!, inContext: context)
-     //   self.image = cover
-       // _ = Pdf(book: self, pdf: (_pdf?.data)!, inContext: context)
+        self.image = Image(book: self, image: UIImage(data: (self._image!.data))!, inContext: context)
+
+       // let bookPdf = Pdf(book: self, pdf: (self._pdf?.data)!, inContext: context)
+       // self.pdf = bookPdf
         
         for author in authorsCD{
             
@@ -69,11 +70,9 @@ public class Book: NSManagedObject {
     
     func isFavoriteBook(){
         self.isfavorite = !self.isfavorite
-        sendNotification(name: BookDidChange)
         
         let context = self.managedObjectContext
-        
-
+  
         if (self.isfavorite){
             let bookTag = BookTag(book: self, tagName: "favorite", inContext: context!)
             self.addToBookTags(bookTag)
@@ -82,6 +81,7 @@ public class Book: NSManagedObject {
             req.predicate  = NSPredicate(format: "tag.name == %@", "favorite")
             req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
             let existingFavoriteBookTags = try! context?.fetch(req)
+            print(existingFavoriteBookTags?.count)
             if(existingFavoriteBookTags?.count == 1){
                 let bt = existingFavoriteBookTags?[0]
                 context?.delete((bt?.tag!)!)
@@ -100,7 +100,43 @@ public class Book: NSManagedObject {
         } catch {
             print("No se pudo guardar el favorito")
         }
+        sendNotification(name: BookDidChange)
      }
+}
+
+
+extension Book{
+    static func observableKeys() -> [String] {return ["_image"]}
+    
+    func setupKVO(){
+        
+        for key in Book.observableKeys(){
+            self.addObserver(self, forKeyPath: key,
+                             options: [], context: nil)
+        }
+        
+        
+    }
+    
+    func teardownKVO(){
+        
+        for key in Book.observableKeys(){
+            self.removeObserver(self, forKeyPath: key)
+        }
+        
+        
+    }
+    
+    public override func observeValue(forKeyPath keyPath: String?,
+                                      of object: Any?,
+                                      change: [NSKeyValueChangeKey : Any]?,
+                                      context: UnsafeMutableRawPointer?) {
+        
+        
+        self.image = Image(book: self, image: UIImage(data: (self._image!.data))!, inContext: self.managedObjectContext!)
+        
+    }
+    
 }
 
 

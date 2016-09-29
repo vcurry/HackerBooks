@@ -14,6 +14,9 @@ class BooksViewController: CoreDataTableViewController {
 
     var model = CoreDataStack(modelName: "Model")!
     
+    var delegate : BooksViewControllerDelegate?
+
+    
     var existingTags : [Tag] = []
     
     override func viewDidLoad() {
@@ -30,6 +33,9 @@ class BooksViewController: CoreDataTableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
+        req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        existingTags = try! model.context.fetch(req)
         setupNotifications()
     }
     
@@ -48,7 +54,6 @@ class BooksViewController: CoreDataTableViewController {
     //MARK: - Data Source
     override
     func numberOfSections(in tableView: UITableView) -> Int {
-        print("tags: \(existingTags.count)")
         return (existingTags.count)
     }
     
@@ -79,22 +84,8 @@ class BooksViewController: CoreDataTableViewController {
         let bk = existingBookTags[indexPath.row].book
 
         let cell : BookTableViewCell = tableView.dequeueReusableCell(withIdentifier: BookTableViewCell.cellID, for: indexPath) as! BookTableViewCell
-
-        cell.titleView.text = bk?.title
-        let aut : [Author] = bk!.authors?.allObjects as! [Author]
-
-        var autText : [String] = []
-        for a in aut{
-            autText.append(a.name!)
-        }
-        cell.authorsView.text = autText.joined(separator: ", ")
         
-        let btags : [BookTag] = bk!.bookTags!.allObjects as! [BookTag]
-        var tagText : [String] = []
-        for bt in btags{
-            tagText.append((bt.tag?.name)!)
-        }
-        cell.tagsView.text = tagText.joined(separator: ", ")
+        cell.startObserving(book: bk!)
         return cell
     }
     
@@ -138,6 +129,7 @@ class BooksViewController: CoreDataTableViewController {
         let nc = NotificationCenter.default
         bookObserver = nc.addObserver(forName: BookDidChange, object: nil, queue: nil)
         { (n: Notification) in
+            print("Hacemos reload")
             self.tableView.reloadData()
         }
     }
@@ -153,7 +145,7 @@ class BooksViewController: CoreDataTableViewController {
 
 
 //MARK: - Delegate protocol
-protocol LibraryViewControllerDelegate {
-    func libraryViewController(_ sender: BooksViewController, didSelect selectedBook:Book)
+protocol BooksViewControllerDelegate {
+    func booksViewController(_ sender: BooksViewController, didSelect selectedBook:Book)
 }
 

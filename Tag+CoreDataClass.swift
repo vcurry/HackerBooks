@@ -21,6 +21,25 @@ public class Tag: NSManagedObject {
         self.name = name
         
     }
+    
+    func isFavorite()-> Bool{
+        return self.name == "favorite"
+    }
 }
 
 
+//MARK: - Comparable
+extension Tag: Comparable{
+    public static func <(lhs: Tag, rhs: Tag) -> Bool{
+        
+        if lhs.isFavorite(){
+            return true
+        }
+        else if rhs.isFavorite(){
+            return false
+        }else{
+            return lhs.name! < rhs.name!
+        }
+    }
+    
+}

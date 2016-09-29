@@ -25,6 +25,14 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Porque me da la gana</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Porque me sigue dando la gana</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Me da la gana todavía</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Porque me da la gana</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

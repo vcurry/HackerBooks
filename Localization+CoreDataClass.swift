@@ -8,20 +8,32 @@
 
 import Foundation
 import CoreData
+import CoreLocation
 
 @objc(Localization)
 public class Localization: NSManagedObject {
 
     static let entityName = "Localization"
     
-    convenience init(longitude: Double, latitude: Double, address: String, inContext context: NSManagedObjectContext){
-        let ent = NSEntityDescription.entity(forEntityName: Author.entityName, in: context)!
+    convenience init(loc: CLLocation, inContext context: NSManagedObjectContext){
+        let ent = NSEntityDescription.entity(forEntityName: Localization.entityName, in: context)!
         
         self.init(entity: ent, insertInto: context)
         
-        self.longitude = longitude
-        self.latitude = latitude
-        self.address = address
+        self.longitude = loc.coordinate.longitude
+        self.latitude = loc.coordinate.latitude
+     
+        let coder = CLGeocoder()
+        coder.reverseGeocodeLocation(loc) { (placemarks, error) in
+            if((error) != nil){
+                print("Error obtaining address \(error)")
+            }else{
+                let pm = (placemarks?[0])! as CLPlacemark
+                let locality = (pm.locality != nil) ? pm.locality : ""
+                let country = (pm.country != nil) ? pm.country : ""
+                self.address = locality! + " - " + country!
+            }
+        }
         
     }
 }

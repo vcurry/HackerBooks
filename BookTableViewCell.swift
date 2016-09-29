@@ -73,13 +73,25 @@ class BookTableViewCell: UITableViewCell {
                           duration: 0.7,
                           options: [.transitionCrossDissolve],
                           animations: {
-                         //   self.coverView.image =  UIImage(data: (self._book?._image?.data)!)
+                            self.coverView.image = UIImage(data: (self._book?.image?.imageData)! as Data)
             }, completion: nil)
         
+        titleView.text = _book?.title
+        let aut : [Author] = _book!.authors?.allObjects as! [Author]
         
-     //   titleView.text = _book?.title
-     //   authorsView.text = _book?.formattedListOfAuthors()
-     //   tagsView.text = _book?.formattedListOfTags()
+        var autText : [String] = []
+        for a in aut{
+            autText.append(a.name!)
+        }
+        authorsView.text = autText.joined(separator: ", ")
+        
+        let btags : [BookTag] = _book!.bookTags!.allObjects as! [BookTag]
+        var tagText : [String] = []
+        for bt in btags{
+            tagText.append((bt.tag?.name)!)
+        }
+        tagsView.text = tagText.joined(separator: ", ")
+
         
     }
     
