@@ -27,9 +27,7 @@ public class BookTag: NSManagedObject {
         req.fetchLimit = 1
         req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: false)]
         let existingTags = try! context.fetch(req)
-        print(existingTags)
         if(existingTags == []){
-            print("Creamos \(tagName)")
             let t = Tag(name: tagName, inContext: context)
             self.tag = t
         } else{

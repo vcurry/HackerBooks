@@ -181,10 +181,9 @@ let AsyncDataDidEndLoading = Notification.Name(rawValue: "io.keepCoding.AsyncDat
 
 extension AsyncData{
     func sendNotification(){
-        
         let n = Notification(name: AsyncDataDidEndLoading,
                              object: self, userInfo: ["url" : url, "data" : _data])
-        
+        print("envía desde AsyncData")
         let nc = NotificationCenter.default
         
         nc.post(n)

@@ -70,6 +70,7 @@ class AnnotationsViewController: CoreDataTableViewController {
             return
         }
         let annotation = Annotation(book: _model!, inContext: fc.managedObjectContext)
+
         let aVC = AnnotationViewController(model: annotation)
         navigationController?.pushViewController(aVC, animated: true)
         

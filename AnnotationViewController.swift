@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import CoreLocation
+import Social
 
 class AnnotationViewController: UIViewController {
     
@@ -17,29 +19,6 @@ class AnnotationViewController: UIViewController {
     @IBOutlet weak var text: UITextView!
     
     @IBOutlet weak var imageView: UIImageView!
-
-    @IBAction func takePhoto(_ sender: AnyObject) {
-   
-        let picker = UIImagePickerController()
-
-        if UIImagePickerController.isCameraDeviceAvailable(.rear){
-            picker.sourceType = .camera
-        }else{
-            picker.sourceType = .photoLibrary
-        }
-        
-        
-        picker.delegate = self
-        
-        self.present(picker, animated: true) {
-
-        }
-
-    }
-
-
-    @IBAction func deletePhoto(_ sender: AnyObject) {
-    }    
     
     init(model: Annotation){
         
@@ -91,6 +70,70 @@ class AnnotationViewController: UIViewController {
     func dismissKeyboard(){
         view.endEditing(true)
     }
+
+    @IBAction func takePhoto(_ sender: AnyObject) {
+   
+        let picker = UIImagePickerController()
+
+        if UIImagePickerController.isCameraDeviceAvailable(.rear){
+            picker.sourceType = .camera
+        }else{
+            picker.sourceType = .photoLibrary
+        }
+        
+        
+        picker.delegate = self
+        
+        self.present(picker, animated: true) {
+
+        }
+
+    }
+
+    @IBAction func showInMap(_ sender: AnyObject) {
+        let loc = CLLocation(latitude: (model.localization?.latitude)!, longitude: (model.localization?.longitude)!)
+        print(model.localization?.latitude)
+        print(model.localization?.longitude)
+        let vc = MapViewController(location: loc)
+        
+        // Mostrarlo
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    @IBAction func shareAnnotation(_ sender: AnyObject) {
+        if text.isFirstResponder{
+            text.resignFirstResponder()
+        }
+        let actionSheet = UIAlertController(title: "", message: "Share your Annotation", preferredStyle: UIAlertControllerStyle.actionSheet)
+        
+        let facebookPostAction = UIAlertAction(title: "Share on Facebook", style: UIAlertActionStyle.default) { (action) in
+            if SLComposeViewController.isAvailable(forServiceType: SLServiceTypeFacebook) {
+                let facebookComposeVC = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+                
+                facebookComposeVC?.setInitialText("\(self.text.text)")
+                
+                self.present(facebookComposeVC!, animated: true, completion: nil)
+            }
+            else {
+                self.showAlertMessage(message: "You are not connected to your Facebook account.")
+            }
+        }
+        
+        let dismissAction = UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel) { (action) in
+            
+        }
+        
+        actionSheet.addAction(facebookPostAction)
+        actionSheet.addAction(dismissAction)
+        
+        present(actionSheet, animated: true, completion: nil)
+    }
+    
+    func showAlertMessage(message: String!) {
+        let alertController = UIAlertController(title: "EasyShare", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alertController.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
+        present(alertController, animated: true, completion: nil)
+    }
     
 }
 
@@ -101,14 +144,9 @@ extension AnnotationViewController: UIImagePickerControllerDelegate, UINavigatio
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        
-        // Redimensionarla al tamaño de la pantalla
-        // deberes (está en el online)
         model.image?.image = info[UIImagePickerControllerOriginalImage] as! UIImage?
         
-        // Quitamos de enmedio al picker
         self.dismiss(animated: true) {
-            //
         }
     }
 }

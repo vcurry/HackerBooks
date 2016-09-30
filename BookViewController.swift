@@ -41,7 +41,7 @@ class BookViewController: UIViewController {
     //MARK: - Syncing
     func syncViewWithModel(book: Book){
         
-        coverImage.image = UIImage(data: (_model.image?.imageData)! as Data)
+        coverImage.image = _model.image?.image
         title = _model.title
         if _model.isfavorite{
             favoriteItem.title = "★"

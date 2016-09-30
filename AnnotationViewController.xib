@@ -34,10 +34,16 @@
                                 <action selector="takePhoto:" destination="-1" id="ugx-Bl-DKL"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="QR4-Wt-5ud"/>
-                        <barButtonItem systemItem="trash" id="vBx-ys-9su">
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="f0V-e5-DTp"/>
+                        <barButtonItem title="Mapa" id="FZQ-QI-rqw">
                             <connections>
-                                <action selector="deletePhoto:" destination="-1" id="YKn-cp-EBj"/>
+                                <action selector="showInMap:" destination="-1" id="Qe8-YL-2yl"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="QR4-Wt-5ud"/>
+                        <barButtonItem systemItem="action" id="vBx-ys-9su">
+                            <connections>
+                                <action selector="shareAnnotation:" destination="-1" id="muQ-w7-SIZ"/>
                             </connections>
                         </barButtonItem>
                     </items>

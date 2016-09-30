@@ -40,6 +40,14 @@ public class Image: NSManagedObject {
         self.image = image
     }
     
+    convenience init(book: Book, inContext context: NSManagedObjectContext){
+        let ent = NSEntityDescription.entity(forEntityName: Image.entityName, in: context)!
+        
+        self.init(entity: ent, insertInto: context)
+        
+        self.book = book
+    }
+    
     convenience init(annotation: Annotation, image: UIImage, inContext context: NSManagedObjectContext){
         let ent = NSEntityDescription.entity(forEntityName: Image.entityName, in: context)!
         

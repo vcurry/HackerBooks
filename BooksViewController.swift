@@ -16,8 +16,10 @@ class BooksViewController: CoreDataTableViewController {
     
     var delegate : BooksViewControllerDelegate?
 
-    
     var existingTags : [Tag] = []
+    
+    var filteredBooks = [Book]()
+    let searchController = UISearchController(searchResultsController: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +30,13 @@ class BooksViewController: CoreDataTableViewController {
         let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
         req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         existingTags = try! model.context.fetch(req)
+        
+        // Setup the Search Controller
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        definesPresentationContext = true
+        searchController.dimsBackgroundDuringPresentation = false
+        tableView.tableHeaderView = searchController.searchBar
         
     }
     
@@ -54,38 +63,60 @@ class BooksViewController: CoreDataTableViewController {
     //MARK: - Data Source
     override
     func numberOfSections(in tableView: UITableView) -> Int {
-        return (existingTags.count)
+        if searchController.isActive && searchController.searchBar.text != "" {
+            return 1
+        } else {
+            return (existingTags.count)
+        }
+
+      //  return (existingTags.count)
     }
     
     override
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return existingTags[section].name
+        if searchController.isActive && searchController.searchBar.text != "" {
+            return ""
+        } else {
+            return (existingTags[section].name)
+        }
+        
     }
     
     override
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
-        req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[section].name!)
+        if searchController.isActive && searchController.searchBar.text != "" {
+            return filteredBooks.count
+        } else {
+        
+            let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
+            req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[section].name!)
 
-        req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
-        let existingBookTags = try! model.context.fetch(req)
-        return (existingBookTags.count)
+            req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
+            let existingBookTags = try! model.context.fetch(req)
+            return (existingBookTags.count)
+        }
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+        let bk : Book
+        if searchController.isActive && searchController.searchBar.text != "" {
+            bk = filteredBooks[(indexPath as NSIndexPath).row]
+        } else {
         let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
         req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[indexPath.section].name!)
         
         req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
         let existingBookTags = try! model.context.fetch(req)
 
-        let bk = existingBookTags[indexPath.row].book
-
+        bk = existingBookTags[indexPath.row].book!
+        
+        
+        }
+        
         let cell : BookTableViewCell = tableView.dequeueReusableCell(withIdentifier: BookTableViewCell.cellID, for: indexPath) as! BookTableViewCell
         
-        cell.startObserving(book: bk!)
+        cell.startObserving(book: bk)
         return cell
     }
     
@@ -95,23 +126,65 @@ class BooksViewController: CoreDataTableViewController {
     
     //MARK: - Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if searchController.isActive && searchController.searchBar.text != "" {
+            let book = filteredBooks[indexPath.row]
+            // Create the VC
+            let bookVC = BookViewController(model: book)
+            
+            // Load it
+            navigationController?.pushViewController(bookVC, animated: true)
+        }else{
+            // Get the book
+            let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
+            req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[indexPath.section].name!)
         
-        // Get the book
-        let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
-        req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[indexPath.section].name!)
-        
-        req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
-        let existingBookTags = try! model.context.fetch(req)
+            req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
+            let existingBookTags = try! model.context.fetch(req)
 
-        let book = existingBookTags[indexPath.row].book
+            let book = existingBookTags[indexPath.row].book
         
-        // Create the VC
-        let bookVC = BookViewController(model: book!)
+            // Create the VC
+            let bookVC = BookViewController(model: book!)
         
-        // Load it
-        navigationController?.pushViewController(bookVC, animated: true)
+            // Load it
+            navigationController?.pushViewController(bookVC, animated: true)
+        }
         
     }
+    
+    func filterContentForSearchText(_ searchText: String) {
+        let req = NSFetchRequest<Book>(entityName: Book.entityName)
+        req.predicate = NSPredicate(format: "title CONTAINS[c] %@", searchText)
+        req.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        filteredBooks = try! model.context.fetch(req)
+        
+        let reqAuthors = NSFetchRequest<Author>(entityName: Author.entityName)
+        reqAuthors.predicate = NSPredicate(format: "name CONTAINS[c] %@", searchText)
+        reqAuthors.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        let searchedAuthors = try! model.context.fetch(reqAuthors)
+    
+        let reqTags = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
+        reqTags.predicate = NSPredicate(format: "tag.name CONTAINS[c] %@", searchText)
+        reqTags.sortDescriptors = [NSSortDescriptor(key: "tag.name", ascending: true)]
+        let searchedBookTags = try! model.context.fetch(reqTags)
+        
+        for author in searchedAuthors{
+            for book in author.books!{
+                if !filteredBooks.contains(book as! Book){
+                    filteredBooks.append(book as! Book)
+                }
+            }
+        }
+    
+        for bt in searchedBookTags{
+            if !filteredBooks.contains(bt.book!){
+                filteredBooks.append(bt.book!)
+            }
+        }
+        
+        tableView.reloadData()
+    }
+
     
     override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // The cell was just hidden: stop observing
@@ -147,5 +220,21 @@ class BooksViewController: CoreDataTableViewController {
 //MARK: - Delegate protocol
 protocol BooksViewControllerDelegate {
     func booksViewController(_ sender: BooksViewController, didSelect selectedBook:Book)
+}
+
+
+extension BooksViewController: UISearchBarDelegate {
+    // MARK: - UISearchBar Delegate
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        filterContentForSearchText(searchBar.text!)
+    }
+}
+
+extension BooksViewController: UISearchResultsUpdating {
+    // MARK: - UISearchResultsUpdating Delegate
+    func updateSearchResults(for searchController: UISearchController) {
+        let searchBar = searchController.searchBar
+        filterContentForSearchText(searchController.searchBar.text!)
+    }
 }
 

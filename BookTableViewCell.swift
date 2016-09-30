@@ -23,6 +23,8 @@ class BookTableViewCell: UITableViewCell {
     private
     var _bookObserver : NSObjectProtocol?
     
+    private var downloaded : Bool = false
+    
     //MARK: - Outlets
     @IBOutlet weak var coverView: UIImageView!
     @IBOutlet weak var titleView: UILabel!
@@ -35,9 +37,8 @@ class BookTableViewCell: UITableViewCell {
     // in this case
     func startObserving(book: Book){
         _book = book
-        _nc.addObserver(forName: BookCoverImageDidDownload, object: _book, queue: nil) { (n: Notification) in
-            self.syncWithBook()
-        }
+        _nc.addObserver(self, selector: #selector(imageDidDownload), name: BookCoverImageDidDownload, object: nil)
+
         syncWithBook()
         
         
@@ -53,8 +54,14 @@ class BookTableViewCell: UITableViewCell {
         
     }
     
-    //MARK: - Lifecycle
+    func imageDidDownload(){
+        print(self._book?._image?.data)
+       // self._book?.image?.image = UIImage(data: (self._book?._image?.data)!)
+
+        syncWithBook()
+    }
     
+    //MARK: - Lifecycle
     // Sets the view in a neutral state, before being reused
     override func prepareForReuse() {
         stopObserving()
@@ -68,14 +75,20 @@ class BookTableViewCell: UITableViewCell {
     //MARK: - Utils
     private
     func syncWithBook(){
-        
-        UIView.transition(with: self.coverView,
+        if downloaded == false {
+            print(downloaded)
+            self.coverView.image = self._book?.image?.image
+            
+        } else{
+            print("entramos en imagen")
+       //     self.coverView.image = self._book?.image?.image
+            UIView.transition(with: self.coverView,
                           duration: 0.7,
                           options: [.transitionCrossDissolve],
                           animations: {
                             self.coverView.image = UIImage(data: (self._book?.image?.imageData)! as Data)
             }, completion: nil)
-        
+        }
         titleView.text = _book?.title
         let aut : [Author] = _book!.authors?.allObjects as! [Author]
         

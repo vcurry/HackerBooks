@@ -40,11 +40,8 @@ public class Book: NSManagedObject {
         _image?.delegate = self
         _pdf?.delegate = self
         
-        
         self.image = Image(book: self, image: UIImage(data: (self._image!.data))!, inContext: context)
-
-       // let bookPdf = Pdf(book: self, pdf: (self._pdf?.data)!, inContext: context)
-       // self.pdf = bookPdf
+   //     self.pdf = Pdf(book: self, pdf: (self._pdf?.data)!, inContext: context)
         
         for author in authorsCD{
             
@@ -67,6 +64,7 @@ public class Book: NSManagedObject {
         }
 
     }
+ 
     
     func isFavoriteBook(){
         self.isfavorite = !self.isfavorite
@@ -81,7 +79,6 @@ public class Book: NSManagedObject {
             req.predicate  = NSPredicate(format: "tag.name == %@", "favorite")
             req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
             let existingFavoriteBookTags = try! context?.fetch(req)
-            print(existingFavoriteBookTags?.count)
             if(existingFavoriteBookTags?.count == 1){
                 let bt = existingFavoriteBookTags?[0]
                 context?.delete((bt?.tag!)!)
@@ -179,11 +176,11 @@ extension Book: AsyncDataDelegate{
         
         let notificationName : Notification.Name
         
-        
         switch sender {
         case _image!:
             notificationName = BookCoverImageDidDownload
             delegate?.bookCoverImageDidDownload(sender: self)
+            print("Notificación enviada desde libro")
             
         case _pdf!:
             notificationName = BookPDFDidDownload

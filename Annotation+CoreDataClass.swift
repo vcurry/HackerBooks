@@ -28,7 +28,7 @@ public class Annotation: NSManagedObject, CLLocationManagerDelegate {
         modificationDate = NSDate()
         
         image = Image(annotation: self, image: coverImage, inContext: context)
-        
+
 
         
     }
@@ -43,7 +43,7 @@ public class Annotation: NSManagedObject, CLLocationManagerDelegate {
         modificationDate = NSDate()
         
         image = Image(annotation: self, inContext: context)
-        
+
         
     }
 }
