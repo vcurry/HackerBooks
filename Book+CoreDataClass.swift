@@ -41,7 +41,7 @@ public class Book: NSManagedObject {
         _pdf?.delegate = self
         
         self.image = Image(book: self, image: UIImage(data: (self._image!.data))!, inContext: context)
-   //     self.pdf = Pdf(book: self, pdf: (self._pdf?.data)!, inContext: context)
+        self.pdf = Pdf(book: self, pdf: (self._pdf?.data)!, inContext: context)
         
         for author in authorsCD{
             
@@ -102,41 +102,6 @@ public class Book: NSManagedObject {
 }
 
 
-extension Book{
-    static func observableKeys() -> [String] {return ["_image"]}
-    
-    func setupKVO(){
-        
-        for key in Book.observableKeys(){
-            self.addObserver(self, forKeyPath: key,
-                             options: [], context: nil)
-        }
-        
-        
-    }
-    
-    func teardownKVO(){
-        
-        for key in Book.observableKeys(){
-            self.removeObserver(self, forKeyPath: key)
-        }
-        
-        
-    }
-    
-    public override func observeValue(forKeyPath keyPath: String?,
-                                      of object: Any?,
-                                      change: [NSKeyValueChangeKey : Any]?,
-                                      context: UnsafeMutableRawPointer?) {
-        
-        
-        self.image = Image(book: self, image: UIImage(data: (self._image!.data))!, inContext: self.managedObjectContext!)
-        
-    }
-    
-}
-
-
 //MARK: - Communication - delegate
 protocol BookDelegate: class{
     func bookDidChange(sender:Book)
@@ -180,7 +145,7 @@ extension Book: AsyncDataDelegate{
         case _image!:
             notificationName = BookCoverImageDidDownload
             delegate?.bookCoverImageDidDownload(sender: self)
-            print("Notificación enviada desde libro")
+         self.image?.updateImage(image: UIImage(data: (self._image?.data)!)!)
             
         case _pdf!:
             notificationName = BookPDFDidDownload

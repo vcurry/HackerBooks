@@ -151,7 +151,7 @@ protocol AsyncDataDelegate : class{
     func asyncData(_ sender: AsyncData, didEndLoadingFrom url: URL)
     func asyncData(_ sender: AsyncData, didFailLoadingFrom url: URL, error: NSError)
     func asyncData(_ sender: AsyncData, fileSystemDidFailAt url: URL, error: NSError)
-
+    
     
 }
 // Default implemntation for infrequently used methods
@@ -181,9 +181,10 @@ let AsyncDataDidEndLoading = Notification.Name(rawValue: "io.keepCoding.AsyncDat
 
 extension AsyncData{
     func sendNotification(){
+        
         let n = Notification(name: AsyncDataDidEndLoading,
                              object: self, userInfo: ["url" : url, "data" : _data])
-        print("envía desde AsyncData")
+        
         let nc = NotificationCenter.default
         
         nc.post(n)

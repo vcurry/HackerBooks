@@ -37,11 +37,9 @@ class BookTableViewCell: UITableViewCell {
     // in this case
     func startObserving(book: Book){
         _book = book
-        _nc.addObserver(self, selector: #selector(imageDidDownload), name: BookCoverImageDidDownload, object: nil)
-
+        _nc.addObserver(self, selector: #selector(syncWithBook), name: BookCoverImageDidDownload, object: nil)
+        
         syncWithBook()
-        
-        
     }
     
     func stopObserving(){
@@ -52,13 +50,6 @@ class BookTableViewCell: UITableViewCell {
             _book = nil
         }
         
-    }
-    
-    func imageDidDownload(){
-        print(self._book?._image?.data)
-       // self._book?.image?.image = UIImage(data: (self._book?._image?.data)!)
-
-        syncWithBook()
     }
     
     //MARK: - Lifecycle
@@ -73,22 +64,16 @@ class BookTableViewCell: UITableViewCell {
     }
     
     //MARK: - Utils
-    private
+    @objc private
     func syncWithBook(){
-        if downloaded == false {
-            print(downloaded)
-            self.coverView.image = self._book?.image?.image
-            
-        } else{
-            print("entramos en imagen")
-       //     self.coverView.image = self._book?.image?.image
-            UIView.transition(with: self.coverView,
-                          duration: 0.7,
-                          options: [.transitionCrossDissolve],
-                          animations: {
-                            self.coverView.image = UIImage(data: (self._book?.image?.imageData)! as Data)
-            }, completion: nil)
-        }
+//            UIView.transition(with: self.coverView,
+//                          duration: 0.7,
+//                          options: [.transitionCrossDissolve],
+//                          animations: {
+//                            self.coverView.image = self._book?.image?.image
+//            }, completion: nil)
+
+        self.coverView.image = self._book?.image?.image
         titleView.text = _book?.title
         let aut : [Author] = _book!.authors?.allObjects as! [Author]
         

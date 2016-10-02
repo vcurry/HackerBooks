@@ -102,7 +102,6 @@ extension Annotation{
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         if(status == CLAuthorizationStatus.authorizedAlways || status == CLAuthorizationStatus.authorizedWhenInUse){
             self.locationManager.startUpdatingLocation()
-            print(locationManager.location)
         }
 
     }

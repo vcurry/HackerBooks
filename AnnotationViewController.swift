@@ -24,7 +24,6 @@ class AnnotationViewController: UIViewController {
         
         self.model = model
         super.init(nibName: nil, bundle: nil)
-        print(model.creationDate)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -92,8 +91,7 @@ class AnnotationViewController: UIViewController {
 
     @IBAction func showInMap(_ sender: AnyObject) {
         let loc = CLLocation(latitude: (model.localization?.latitude)!, longitude: (model.localization?.longitude)!)
-        print(model.localization?.latitude)
-        print(model.localization?.longitude)
+
         let vc = MapViewController(location: loc)
         
         // Mostrarlo

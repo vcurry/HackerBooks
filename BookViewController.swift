@@ -16,6 +16,11 @@ class BookViewController: UIViewController {
     init(model: Book){
         _model = model
         super.init(nibName: nil, bundle: nil)
+        
+        //lo guardamos como último libro leído
+        let uri = Data(NSKeyedArchiver .archivedData(withRootObject: _model.objectID.uriRepresentation()))
+        let defaults = UserDefaults.standard
+        defaults.set(uri, forKey: "lastReadBook")
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -35,7 +40,6 @@ class BookViewController: UIViewController {
 
     @IBAction func switchFavorite(_ sender: AnyObject) {
         _model.isFavoriteBook()
-        print(_model.isfavorite)
         
     }
     //MARK: - Syncing

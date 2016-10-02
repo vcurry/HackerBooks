@@ -42,15 +42,17 @@ class PDFViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupNotifications()
         
-        let nc = NotificationCenter.default
-        _bookObserver = nc.addObserver(forName: BookPDFDidDownload, object: _model, queue: nil){ (n: Notification) in
-            print("entra en pdf")
-            let pdf = Pdf(book: self._model!, pdf: (self._model?.pdf!.pdfData)! as Data, inContext: (self._model?.managedObjectContext!)!)
-            self._model?.pdf = pdf
-            self.browserView.load((self._model?.pdf?.pdfData)! as Data, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"http://www.google.com")!)
+        if(self._model?._pdf?.data == nil){
+            let mainBundle = Bundle.main
+            
+            let defaultURL = mainBundle.url(forResource: "emptyPdf", withExtension: "pdf")!
+        //    self.browserView.loadRequest(URLRequest(url: defaultURL))
+     //       self.browserView.load(defaultData as Data, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"http://www.google.com")!)
+        }else{
+            self.browserView.load((self._model?._pdf?.data)! as Data, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"http://www.google.com")!)   
         }
     }
     

@@ -156,7 +156,7 @@
     {
         "authors": "Caleb Doxsey",
         "image_url": "http://hackershelf.com/media/cache/09/ad/09ad5199bbacbc8180465378365e8b4e.jpg",
-        "pdf_url": "http://www.golang-book.com/assets/pdf/gobook.pdf",
+        "pdf_url": "https://www.golang-book.com/public/pdf/gobook.0.pdf",
         "tags": "programming, go, golang",
         "title": "An Introduction to Programming in Go"
     },
@@ -184,7 +184,7 @@
     {
         "authors": "Andi Gutmans, Stig Bakken, Derick Rethans",
         "image_url": "http://hackershelf.com/media/cache/c0/cb/c0cb7c7b9e516eb257ee873cd2eaf455.jpg",
-        "pdf_url": "http://ptgmedia.pearsoncmg.com/image_urls/013147149X/downloads/013147149X_book.pdf",
+        "pdf_url": "https://ptgmedia.pearsoncmg.com/images/013147149X/downloads/013147149X_book.pdf",
         "tags": "programing, php",
         "title": "PHP 5 Power Programing"
     },

@@ -64,6 +64,9 @@ public class Image: NSManagedObject {
         addToAnnotation(annotation)
     }
     
+    func updateImage(image: UIImage){
+        self.image = image
+    }
     
 }
 
