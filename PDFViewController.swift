@@ -2,7 +2,7 @@
 //  PDFViewController.swift
 //  HackerBooks
 //
-//  Created by Verónica Cordobés on 27/9/16.
+//  Created by Verónica Cordobés on 5/10/16.
 //  Copyright © 2016 Verónica Cordobés. All rights reserved.
 //
 
@@ -10,13 +10,11 @@ import UIKit
 import CoreData
 
 class PDFViewController: UIViewController {
-
     var _model : Book?
     var _bookObserver : NSObjectProtocol?
     
     @IBOutlet weak var browserView: UIWebView!
-    
-    
+
     init(model: Book){
         _model = model
         super.init(nibName: nil, bundle: nil)
@@ -36,24 +34,17 @@ class PDFViewController: UIViewController {
         let fc = NSFetchedResultsController(fetchRequest: req, managedObjectContext: (_model?.managedObjectContext!)!, sectionNameKeyPath: nil, cacheName: nil)
         
         let annotationsVC = AnnotationsViewController(fc: fc as! NSFetchedResultsController<NSFetchRequestResult>, model: _model!)
-
+        
         navigationController?.pushViewController(annotationsVC, animated: true)
     }
-    
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupNotifications()
         
-        if(self._model?._pdf?.data == nil){
-            let mainBundle = Bundle.main
-            
-            let defaultURL = mainBundle.url(forResource: "emptyPdf", withExtension: "pdf")!
-        //    self.browserView.loadRequest(URLRequest(url: defaultURL))
-     //       self.browserView.load(defaultData as Data, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"http://www.google.com")!)
-        }else{
-            self.browserView.load((self._model?._pdf?.data)! as Data, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"http://www.google.com")!)   
-        }
+        self.browserView.load((self._model?.pdf?.pdfData)! as Data, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"http://www.google.com")!)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -88,4 +79,5 @@ extension PDFViewController{
         nc.removeObserver(_bookObserver)
         _bookObserver = nil
     }
+
 }

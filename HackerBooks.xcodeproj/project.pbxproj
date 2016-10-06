@@ -35,6 +35,8 @@
 		E36B3AA51D907F100048A5D6 /* AsyncData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36B3AA21D907F100048A5D6 /* AsyncData.swift */; };
 		E36B3AA61D907F100048A5D6 /* books_readable.json in Resources */ = {isa = PBXBuildFile; fileRef = E36B3AA31D907F100048A5D6 /* books_readable.json */; };
 		E36B3AA71D907F100048A5D6 /* JSONProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E36B3AA41D907F100048A5D6 /* JSONProcessing.swift */; };
+		E39C90DD1DA4FF9F006E5B27 /* PDFViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39C90DB1DA4FF9F006E5B27 /* PDFViewController.swift */; };
+		E39C90DE1DA4FF9F006E5B27 /* PDFViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E39C90DC1DA4FF9F006E5B27 /* PDFViewController.xib */; };
 		E3A325771D9144A6005F85FB /* emptyBookCover.png in Resources */ = {isa = PBXBuildFile; fileRef = E3A325751D9144A6005F85FB /* emptyBookCover.png */; };
 		E3A325781D9144A6005F85FB /* emptyPdf.pdf in Resources */ = {isa = PBXBuildFile; fileRef = E3A325761D9144A6005F85FB /* emptyPdf.pdf */; };
 		E3A3257A1D914FB6005F85FB /* CoreDataTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A325791D914FB6005F85FB /* CoreDataTableViewController.swift */; };
@@ -42,8 +44,6 @@
 		E3F121BD1D9EF03C00DCB7BA /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F121BB1D9EF03C00DCB7BA /* MapViewController.swift */; };
 		E3F121BE1D9EF03C00DCB7BA /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F121BC1D9EF03C00DCB7BA /* MapViewController.xib */; };
 		E3F121C11D9EFF1D00DCB7BA /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3F121C01D9EFF1D00DCB7BA /* Social.framework */; };
-		E3F704F11D9A7AB600732CCC /* PDFViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F704EF1D9A7AB600732CCC /* PDFViewController.swift */; };
-		E3F704F21D9A7AB600732CCC /* PDFViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3F704F01D9A7AB600732CCC /* PDFViewController.xib */; };
 		E3FCA4781D8DE31F00672FC0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FCA4771D8DE31F00672FC0 /* AppDelegate.swift */; };
 		E3FCA47A1D8DE31F00672FC0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FCA4791D8DE31F00672FC0 /* ViewController.swift */; };
 		E3FCA47D1D8DE31F00672FC0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3FCA47B1D8DE31F00672FC0 /* Main.storyboard */; };
@@ -91,6 +91,8 @@
 		E36B3AA21D907F100048A5D6 /* AsyncData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AsyncData.swift; path = ../AsyncData.swift; sourceTree = "<group>"; };
 		E36B3AA31D907F100048A5D6 /* books_readable.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = books_readable.json; path = ../books_readable.json; sourceTree = "<group>"; };
 		E36B3AA41D907F100048A5D6 /* JSONProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSONProcessing.swift; path = ../JSONProcessing.swift; sourceTree = "<group>"; };
+		E39C90DB1DA4FF9F006E5B27 /* PDFViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDFViewController.swift; sourceTree = "<group>"; };
+		E39C90DC1DA4FF9F006E5B27 /* PDFViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PDFViewController.xib; sourceTree = "<group>"; };
 		E3A325751D9144A6005F85FB /* emptyBookCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = emptyBookCover.png; sourceTree = "<group>"; };
 		E3A325761D9144A6005F85FB /* emptyPdf.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = emptyPdf.pdf; sourceTree = "<group>"; };
 		E3A325791D914FB6005F85FB /* CoreDataTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataTableViewController.swift; sourceTree = "<group>"; };
@@ -98,8 +100,6 @@
 		E3F121BB1D9EF03C00DCB7BA /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		E3F121BC1D9EF03C00DCB7BA /* MapViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
 		E3F121C01D9EFF1D00DCB7BA /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
-		E3F704EF1D9A7AB600732CCC /* PDFViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDFViewController.swift; sourceTree = "<group>"; };
-		E3F704F01D9A7AB600732CCC /* PDFViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PDFViewController.xib; sourceTree = "<group>"; };
 		E3FCA4741D8DE31F00672FC0 /* HackerBooks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HackerBooks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3FCA4771D8DE31F00672FC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E3FCA4791D8DE31F00672FC0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -172,8 +172,8 @@
 				E3A3257C1D91668F005F85FB /* BooksViewController.swift */,
 				E361D9AE1D985DF6001FB83C /* BookViewController.swift */,
 				E361D9AF1D985DF6001FB83C /* BookViewController.xib */,
-				E3F704EF1D9A7AB600732CCC /* PDFViewController.swift */,
-				E3F704F01D9A7AB600732CCC /* PDFViewController.xib */,
+				E39C90DB1DA4FF9F006E5B27 /* PDFViewController.swift */,
+				E39C90DC1DA4FF9F006E5B27 /* PDFViewController.xib */,
 				E30E0A661D9BA92D00E59CEB /* AnnotationsViewController.swift */,
 				E30E0A781D9BBBB200E59CEB /* AnnotationViewController.swift */,
 				E30E0A791D9BBBB200E59CEB /* AnnotationViewController.xib */,
@@ -333,9 +333,9 @@
 				E3FCA4821D8DE31F00672FC0 /* LaunchScreen.storyboard in Resources */,
 				E3FCA47F1D8DE31F00672FC0 /* Assets.xcassets in Resources */,
 				E3FCA47D1D8DE31F00672FC0 /* Main.storyboard in Resources */,
-				E3F704F21D9A7AB600732CCC /* PDFViewController.xib in Resources */,
 				E3F121BE1D9EF03C00DCB7BA /* MapViewController.xib in Resources */,
 				E35C679F1D951E9A0068B6E0 /* BookTableViewCell.xib in Resources */,
+				E39C90DE1DA4FF9F006E5B27 /* PDFViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,12 +363,12 @@
 				E361D9B01D985DF6001FB83C /* BookViewController.swift in Sources */,
 				E36B3A941D8FE5B00048A5D6 /* Author+CoreDataProperties.swift in Sources */,
 				E36B3A951D8FE5B00048A5D6 /* BookTag+CoreDataClass.swift in Sources */,
-				E3F704F11D9A7AB600732CCC /* PDFViewController.swift in Sources */,
 				E36B3A931D8FE5B00048A5D6 /* Author+CoreDataClass.swift in Sources */,
 				E30E0A711D9BAB2D00E59CEB /* Annotation+CoreDataProperties.swift in Sources */,
 				E3F121BD1D9EF03C00DCB7BA /* MapViewController.swift in Sources */,
 				E36B3A981D8FE5B00048A5D6 /* Localization+CoreDataProperties.swift in Sources */,
 				E3A3257D1D91668F005F85FB /* BooksViewController.swift in Sources */,
+				E39C90DD1DA4FF9F006E5B27 /* PDFViewController.swift in Sources */,
 				E30E0A7A1D9BBBB200E59CEB /* AnnotationViewController.swift in Sources */,
 				E3FCA47A1D8DE31F00672FC0 /* ViewController.swift in Sources */,
 				E36B3AA01D8FE5B00048A5D6 /* Book+CoreDataProperties.swift in Sources */,

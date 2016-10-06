@@ -35,6 +35,12 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="f0V-e5-DTp"/>
+                        <barButtonItem systemItem="save" id="5am-vR-huG">
+                            <connections>
+                                <action selector="guardarNota:" destination="-1" id="gJ9-Lw-BuT"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="pRD-5T-hsN"/>
                         <barButtonItem title="Mapa" id="FZQ-QI-rqw">
                             <connections>
                                 <action selector="showInMap:" destination="-1" id="Qe8-YL-2yl"/>

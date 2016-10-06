@@ -133,6 +133,14 @@ class AnnotationViewController: UIViewController {
         present(alertController, animated: true, completion: nil)
     }
     
+    @IBAction func guardarNota(_ sender: AnyObject) {
+        do{
+            try model.managedObjectContext?.save()
+        }catch{
+            print("No se pudo guardar la nota")
+        }
+
+    }
 }
 
 

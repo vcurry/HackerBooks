@@ -10,12 +10,12 @@ import UIKit
 import CoreData
 
 class BooksViewController: CoreDataTableViewController {
-
-
-    var model = CoreDataStack(modelName: "Model")!
+    
+    
+    var model = CoreDataStack.defaultStack(modelName: "Model")!
     
     var delegate : BooksViewControllerDelegate?
-
+    
     var existingTags : [Tag] = []
     
     var filteredBooks = [Book]()
@@ -30,7 +30,7 @@ class BooksViewController: CoreDataTableViewController {
         let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
         req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         existingTags = try! model.context.fetch(req)
- 
+        
         
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
@@ -38,7 +38,7 @@ class BooksViewController: CoreDataTableViewController {
         definesPresentationContext = true
         searchController.dimsBackgroundDuringPresentation = false
         tableView.tableHeaderView = searchController.searchBar
-
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -56,7 +56,7 @@ class BooksViewController: CoreDataTableViewController {
         let nib = UINib(nibName: "BookTableViewCell", bundle: Bundle.main)
         tableView.register(nib, forCellReuseIdentifier: BookTableViewCell.cellID)
     }
-
+    
     
     //MARK: - Data Source
     override
@@ -66,8 +66,7 @@ class BooksViewController: CoreDataTableViewController {
         } else {
             return (existingTags.count)
         }
-
-      //  return (existingTags.count)
+        
     }
     
     override
@@ -85,16 +84,16 @@ class BooksViewController: CoreDataTableViewController {
         if searchController.isActive && searchController.searchBar.text != "" {
             return filteredBooks.count
         } else {
-        
+            
             let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
             req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[section].name!)
-
+            
             req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
             let existingBookTags = try! model.context.fetch(req)
             return (existingBookTags.count)
         }
     }
-
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let bk : Book
@@ -103,12 +102,12 @@ class BooksViewController: CoreDataTableViewController {
         } else {
             let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
             req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[indexPath.section].name!)
-        
+            
             req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
             let existingBookTags = try! model.context.fetch(req)
             bk = existingBookTags[indexPath.row].book!
-        
-        
+            
+            
         }
         
         let cell : BookTableViewCell = tableView.dequeueReusableCell(withIdentifier: BookTableViewCell.cellID, for: indexPath) as! BookTableViewCell
@@ -134,15 +133,15 @@ class BooksViewController: CoreDataTableViewController {
             // Get the book
             let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
             req.predicate  = NSPredicate(format: "tag.name == %@", existingTags[indexPath.section].name!)
-        
+            
             req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
             let existingBookTags = try! model.context.fetch(req)
-
+            
             let book = existingBookTags[indexPath.row].book
-        
+            
             // Create the VC
             let bookVC = BookViewController(model: book!)
-        
+            
             // Load it
             navigationController?.pushViewController(bookVC, animated: true)
         }
@@ -159,7 +158,7 @@ class BooksViewController: CoreDataTableViewController {
         reqAuthors.predicate = NSPredicate(format: "name CONTAINS[c] %@", searchText)
         reqAuthors.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         let searchedAuthors = try! model.context.fetch(reqAuthors)
-    
+        
         let reqTags = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
         reqTags.predicate = NSPredicate(format: "tag.name CONTAINS[c] %@", searchText)
         reqTags.sortDescriptors = [NSSortDescriptor(key: "tag.name", ascending: true)]
@@ -172,7 +171,7 @@ class BooksViewController: CoreDataTableViewController {
                 }
             }
         }
-    
+        
         for bt in searchedBookTags{
             if !filteredBooks.contains(bt.book!){
                 filteredBooks.append(bt.book!)
@@ -181,7 +180,7 @@ class BooksViewController: CoreDataTableViewController {
         
         tableView.reloadData()
     }
-
+    
     
     override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // The cell was just hidden: stop observing
@@ -199,13 +198,9 @@ class BooksViewController: CoreDataTableViewController {
         let nc = NotificationCenter.default
         bookObserver = nc.addObserver(forName: BookDidChange, object: nil, queue: nil)
         { (n: Notification) in
-            self.existingTags.removeAll()
             let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
             req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-            self.existingTags = try! self.model.context.fetch(req)
             var tagsArray = try! self.model.context.fetch(req)
-            
-            self.existingTags = tagsArray
             for t in tagsArray {
                 if t.isFavorite(){
                     self.existingTags.removeAll()
@@ -213,15 +208,17 @@ class BooksViewController: CoreDataTableViewController {
                     self.existingTags.insert(t, at: 0)
                     tagsArray.remove(at: favIndex!)
                     self.existingTags.append(contentsOf: tagsArray)
+                    
+                } else {
+                    self.existingTags = tagsArray
                 }
             }
-
+            print(self.existingTags.count)
             self.tableView.reloadData()
         }
     }
     
     func tearDownNotifications(){
-        
         let nc = NotificationCenter.default
         nc.removeObserver(self.bookObserver)
     }
@@ -250,4 +247,3 @@ extension BooksViewController: UISearchResultsUpdating {
         filterContentForSearchText(searchController.searchBar.text!)
     }
 }
-

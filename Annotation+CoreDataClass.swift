@@ -29,7 +29,6 @@ public class Annotation: NSManagedObject, CLLocationManagerDelegate {
         
         image = Image(annotation: self, image: coverImage, inContext: context)
 
-
         
     }
     
@@ -44,7 +43,6 @@ public class Annotation: NSManagedObject, CLLocationManagerDelegate {
         
         image = Image(annotation: self, inContext: context)
 
-        
     }
 }
 

@@ -13,8 +13,8 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var model = CoreDataStack(modelName: "Model")!
-
+    let model = CoreDataStack.defaultStack(modelName: "Model")!
+    
     var lastReadBook : Book?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -25,7 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }catch{
             print("La cagamos al intentar borrar")
         }
-
         
         window = UIWindow.init(frame: UIScreen.main.bounds)
 
@@ -36,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let data = try Data(contentsOf: url)
             let jsonDicts = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? JSONArray
             for dict in jsonDicts!{
-                let _ = try decode(book: dict, context: model.context)
+                let _ = try decode(book: dict, context: (model.context))
                 model.save()
                 
             }
@@ -44,39 +43,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }catch{
             fatalError("Error while loading model")
         }
-
         
-        let fr = NSFetchRequest<Book>(entityName: Book.entityName)
+        let fr = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
         fr.fetchBatchSize = 50
         
-        fr.sortDescriptors = [NSSortDescriptor(key: "title",
-                                               ascending: false)]
-        
+        fr.sortDescriptors = [NSSortDescriptor(key: "tag.name",
+                                               ascending: true)]
         
 
-        let fc = NSFetchedResultsController(fetchRequest: fr, managedObjectContext: model.context, sectionNameKeyPath: nil, cacheName: nil)
-
+        let fc = NSFetchedResultsController(fetchRequest: fr, managedObjectContext: (model.context), sectionNameKeyPath: "tag.name", cacheName: nil)
         let bVC = BooksViewController(fetchedResultsController: fc as! NSFetchedResultsController<NSFetchRequestResult>, style: .plain)
         let navVC = UINavigationController(rootViewController: bVC)
         
         
-        //Recuperamos el último libro leído
-        let defaults = UserDefaults.standard
-        if let uriData = defaults.data(forKey: "lastReadBook"){
-            let uri = NSKeyedUnarchiver.unarchiveObject(with: uriData)
-            if uri != nil{
-                let nid = model.context.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: uri as! URL)
-                if nid != nil {
-                    let ob = try! model.context.existingObject(with: nid!)
-                    if ob.isFault {
-                        let req = NSFetchRequest<Book>(entityName: ob.entity.name!)
-                        req.predicate = NSPredicate(format: "SELF = %@", ob)
-                        let res =  try! model.context.fetch(req)
-                        lastReadBook = res.last
-                    }
-                }
-            }
-        }
+//        //Recuperamos el último libro leído
+//        let defaults = UserDefaults.standard
+//        if let uriData = defaults.data(forKey: "lastReadBook"){
+//            let uri = NSKeyedUnarchiver.unarchiveObject(with: uriData)
+//            if uri != nil{
+//                let nid = model.context.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: uri as! URL)
+//                if nid != nil {
+//                    let ob = try! model.context.existingObject(with: nid!)
+//                    if ob.isFault {
+//                        let req = NSFetchRequest<Book>(entityName: ob.entity.name!)
+//                        req.predicate = NSPredicate(format: "SELF = %@", ob)
+//                        let res =  try! model.context.fetch(req)
+//                        lastReadBook = res.last
+//                    }
+//                }
+//            }
+//        }
 
         
         window = UIWindow(frame: UIScreen.main.bounds)

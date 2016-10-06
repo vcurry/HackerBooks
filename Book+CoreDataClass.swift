@@ -91,12 +91,12 @@ public class Book: NSManagedObject {
                 }
             }
         }
-        
-        do {
-            try context?.save()
-        } catch {
+        do{
+            try self.managedObjectContext?.save()
+        }catch{
             print("No se pudo guardar el favorito")
         }
+        
         sendNotification(name: BookDidChange)
      }
 }
@@ -145,11 +145,12 @@ extension Book: AsyncDataDelegate{
         case _image!:
             notificationName = BookCoverImageDidDownload
             delegate?.bookCoverImageDidDownload(sender: self)
-         self.image?.updateImage(image: UIImage(data: (self._image?.data)!)!)
+            self.image?.updateImage(image: UIImage(data: (self._image?.data)!)!)
             
         case _pdf!:
             notificationName = BookPDFDidDownload
             delegate?.bookPDFDidDownload(sender: self)
+            self.pdf?.updatePdf(data: (self._pdf?.data)!)
             
         default:
             fatalError("Should never get here")

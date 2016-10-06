@@ -21,5 +21,9 @@ public class Pdf: NSManagedObject {
         self.book = book
         self.pdfData = pdf as NSData?
     }
+    
+    func updatePdf(data : Data){
+        self.pdfData = data as NSData?
+    }
 
 }

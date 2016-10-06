@@ -34,12 +34,6 @@ public class BookTag: NSManagedObject {
             self.tag = existingTags[0]
         
         }
-        
-        do {
-            try context.save()
-        } catch {
-            print("No se pudo guardar el favorito")
-        }
 
     }
 
