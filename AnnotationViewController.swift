@@ -53,12 +53,6 @@ class AnnotationViewController: UIViewController {
         title = model.book?.title
         text.text = model.text
         imageView.image = model.image?.image
-        if (text.text == nil){
-            text.text = "Texto de la nota"
-        }
-        if (imageView.image == nil){
-            imageView.image = UIImage(contentsOfFile: "emptyBookCover.png")
-        }
     }
     
     func syncViewModel(){
@@ -131,15 +125,6 @@ class AnnotationViewController: UIViewController {
         let alertController = UIAlertController(title: "EasyShare", message: message, preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
         present(alertController, animated: true, completion: nil)
-    }
-    
-    @IBAction func guardarNota(_ sender: AnyObject) {
-        do{
-            try model.managedObjectContext?.save()
-        }catch{
-            print("No se pudo guardar la nota")
-        }
-
     }
 }
 

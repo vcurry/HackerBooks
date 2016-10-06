@@ -47,7 +47,6 @@ class AnnotationsViewController: CoreDataTableViewController {
         }
         
         cell?.imageView?.image = annotation.image?.image
-  //      cell?.textLabel?.text = annotation.text
         let formatter = DateFormatter()
         formatter.dateStyle = DateFormatter.Style.long
         cell?.detailTextLabel?.text = formatter.string(from: annotation.creationDate as! Date)
@@ -71,6 +70,8 @@ class AnnotationsViewController: CoreDataTableViewController {
         }
         let annotation = Annotation(book: _model!, inContext: fc.managedObjectContext)
 
+        let dataModel = CoreDataStack.defaultStack(modelName: "Model")!
+        dataModel.context.insert(annotation)
         let aVC = AnnotationViewController(model: annotation)
         navigationController?.pushViewController(aVC, animated: true)
         

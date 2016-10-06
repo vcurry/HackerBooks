@@ -26,10 +26,23 @@ class BooksViewController: CoreDataTableViewController {
         title = "HackerBooksPro"
         
         registerNib()
-        
+        self.existingTags.removeAll()
         let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
         req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        existingTags = try! model.context.fetch(req)
+        self.existingTags = try! model.context.fetch(req)
+
+
+//        for t in self.existingTags {
+//            if t.isFavorite(){
+//                let favIndex = tagsArray.index(of: t)
+//                self.existingTags.insert(t, at: 0)
+//                tagsArray.remove(at: favIndex!)
+//                self.existingTags.append(contentsOf: tagsArray)
+//            } else {
+//                self.existingTags = tagsArray
+//            }
+//        }
+        
         
         
         // Setup the Search Controller
@@ -43,7 +56,14 @@ class BooksViewController: CoreDataTableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNotifications()
+
+        print(existingTags.count)
+        let nc = NotificationCenter.default
+        bookObserver = nc.addObserver(forName: BookDidChange, object: nil, queue: nil)
+        { (n: Notification) in
+            self.tableView.reloadData()
+        }
+
     }
     
     deinit {
@@ -54,7 +74,7 @@ class BooksViewController: CoreDataTableViewController {
     private func registerNib(){
         
         let nib = UINib(nibName: "BookTableViewCell", bundle: Bundle.main)
-        tableView.register(nib, forCellReuseIdentifier: BookTableViewCell.cellID)
+        self.tableView.register(nib, forCellReuseIdentifier: BookTableViewCell.cellID)
     }
     
     
@@ -64,7 +84,7 @@ class BooksViewController: CoreDataTableViewController {
         if searchController.isActive && searchController.searchBar.text != "" {
             return 1
         } else {
-            return (existingTags.count)
+            return (self.existingTags.count)
         }
         
     }
@@ -74,7 +94,7 @@ class BooksViewController: CoreDataTableViewController {
         if searchController.isActive && searchController.searchBar.text != "" {
             return ""
         } else {
-            return (existingTags[section].name)
+            return (self.existingTags[section].name)
         }
         
     }
@@ -178,7 +198,7 @@ class BooksViewController: CoreDataTableViewController {
             }
         }
         
-        tableView.reloadData()
+        self.tableView.reloadData()
     }
     
     
@@ -198,22 +218,6 @@ class BooksViewController: CoreDataTableViewController {
         let nc = NotificationCenter.default
         bookObserver = nc.addObserver(forName: BookDidChange, object: nil, queue: nil)
         { (n: Notification) in
-            let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
-            req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-            var tagsArray = try! self.model.context.fetch(req)
-            for t in tagsArray {
-                if t.isFavorite(){
-                    self.existingTags.removeAll()
-                    let favIndex = tagsArray.index(of: t)
-                    self.existingTags.insert(t, at: 0)
-                    tagsArray.remove(at: favIndex!)
-                    self.existingTags.append(contentsOf: tagsArray)
-                    
-                } else {
-                    self.existingTags = tagsArray
-                }
-            }
-            print(self.existingTags.count)
             self.tableView.reloadData()
         }
     }
@@ -222,9 +226,7 @@ class BooksViewController: CoreDataTableViewController {
         let nc = NotificationCenter.default
         nc.removeObserver(self.bookObserver)
     }
-    
 }
-
 
 
 //MARK: - Delegate protocol

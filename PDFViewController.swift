@@ -52,7 +52,6 @@ class PDFViewController: UIViewController {
         tearDownNotifications()
     }
     
-    
 }
 
 
