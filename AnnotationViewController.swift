@@ -126,6 +126,11 @@ class AnnotationViewController: UIViewController {
         alertController.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
+    
+    @IBAction func saveAnnotation(_ sender: AnyObject) {
+        let dataModel = CoreDataStack.defaultStack(modelName: "Model")
+        dataModel?.save()
+    }
 }
 
 
