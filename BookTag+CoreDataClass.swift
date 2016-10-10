@@ -34,6 +34,8 @@ public class BookTag: NSManagedObject {
             self.tag = existingTags[0]
         
         }
+        
+        print("Booktag \(self.tag?.name) creado")
 
     }
 

@@ -21,6 +21,8 @@ class BooksViewController: CoreDataTableViewController {
     var filteredBooks = [Book]()
     let searchController = UISearchController(searchResultsController: nil)
     
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "HackerBooksPro"
@@ -28,23 +30,10 @@ class BooksViewController: CoreDataTableViewController {
         registerNib()
         self.existingTags.removeAll()
         let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
+        req.fetchBatchSize = 50
         req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         self.existingTags = try! model.context.fetch(req)
 
-
-//        for t in self.existingTags {
-//            if t.isFavorite(){
-//                let favIndex = tagsArray.index(of: t)
-//                self.existingTags.insert(t, at: 0)
-//                tagsArray.remove(at: favIndex!)
-//                self.existingTags.append(contentsOf: tagsArray)
-//            } else {
-//                self.existingTags = tagsArray
-//            }
-//        }
-        
-        
-        
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
@@ -56,13 +45,13 @@ class BooksViewController: CoreDataTableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.existingTags.removeAll()
+        let req = NSFetchRequest<Tag>(entityName: Tag.entityName)
+        req.fetchBatchSize = 50
+        req.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        self.existingTags = try! model.context.fetch(req)
 
-        print(existingTags.count)
-        let nc = NotificationCenter.default
-        bookObserver = nc.addObserver(forName: BookDidChange, object: nil, queue: nil)
-        { (n: Notification) in
-            self.tableView.reloadData()
-        }
+        setupNotifications()
 
     }
     
@@ -218,8 +207,21 @@ class BooksViewController: CoreDataTableViewController {
         let nc = NotificationCenter.default
         bookObserver = nc.addObserver(forName: BookDidChange, object: nil, queue: nil)
         { (n: Notification) in
+
             self.tableView.reloadData()
         }
+    }
+    
+    func orderTagsWithFavorite(tagsArray: [Tag]) -> [Tag] {
+        var resultTagsArray = tagsArray
+//        for t in tagsArray {
+//            if t.isFavorite() {
+//                let favIndex = tagsArray.index(of: t)
+//                resultTagsArray.remove(at: favIndex!)
+//                resultTagsArray.insert(t, at: 0)
+//            }
+//        }
+        return resultTagsArray
     }
     
     func tearDownNotifications(){

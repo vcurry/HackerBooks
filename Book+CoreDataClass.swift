@@ -69,34 +69,31 @@ public class Book: NSManagedObject {
     func isFavoriteBook(){
         self.isfavorite = !self.isfavorite
         
-        let context = self.managedObjectContext
+        let dataModel = CoreDataStack.defaultStack(modelName: "Model")!
   
         if (self.isfavorite){
-            let bookTag = BookTag(book: self, tagName: "favorite", inContext: context!)
+            let bookTag = BookTag(book: self, tagName: "favorite", inContext: dataModel.context)
+            dataModel.context.insert(bookTag)
             self.addToBookTags(bookTag)
         }else{
             let req = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
             req.predicate  = NSPredicate(format: "tag.name == %@", "favorite")
             req.sortDescriptors = [NSSortDescriptor(key: "book.title", ascending: true)]
-            let existingFavoriteBookTags = try! context?.fetch(req)
-            if(existingFavoriteBookTags?.count == 1){
-                let bt = existingFavoriteBookTags?[0]
-                context?.delete((bt?.tag!)!)
-                context?.delete(bt!)
+            let existingFavoriteBookTags = try! dataModel.context.fetch(req)
+            if(existingFavoriteBookTags.count == 1){
+                let bt = existingFavoriteBookTags[0]
+                dataModel.context.delete((bt.tag!))
+                dataModel.context.delete(bt)
             } else{
-                for bt in existingFavoriteBookTags!{
+                for bt in existingFavoriteBookTags{
                     if bt.book == self {
-                        context?.delete(bt)
+                        dataModel.context.delete(bt)
                     }
                 }
             }
         }
         
-        do{
-            try self.managedObjectContext?.save()
-        }catch{
-            print("No se pudo guardar el favorito")
-        }
+        dataModel.save()
         
         sendNotification(name: BookDidChange)
      }

@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                ascending: true)]
         
 
-        let fc = NSFetchedResultsController(fetchRequest: fr, managedObjectContext: (model.context), sectionNameKeyPath: nil, cacheName: nil)
+        let fc = NSFetchedResultsController(fetchRequest: fr, managedObjectContext: (model.context), sectionNameKeyPath: "tag.name", cacheName: nil)
         let bVC = BooksViewController(fetchedResultsController: fc as! NSFetchedResultsController<NSFetchRequestResult>, style: .plain)
         let navVC = UINavigationController(rootViewController: bVC)
         
